@@ -8,32 +8,18 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.visitor.*;
 import java.io.FileInputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class GetCompilationUnit {
-	public static void main(String[] args) throws Exception
-	{		
-			
-			
-			GetCompilationUnit gc = new GetCompilationUnit();
-			List<String> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-2/");
-			
-			for(int i = 0; i<java_files.size(); i++){
-				FileInputStream infile = new FileInputStream(java_files.get(i));
-				System.out.println(java_files.get(i)+ "in order method variable extended class and Inherited class");
-				CompilationUnit c = JavaParser.parse(infile);
-				//System.out.println(c.toString());
-				new MethodVisitor().visit(c, null);
-				new VariableVisitor().visit(c, null);
-				new getExtendedClass().visit(c, null);
-				new getInterfaces().visit(c, null);
-			}
-	}	
+
+	//File parsed_code = new File();
 	
 	public List<String> extractJavaFiles(String path){
 		//List<String> result = new ArrayList<String>();
@@ -56,55 +42,38 @@ public class GetCompilationUnit {
 		
 	}
 	
-	public static class MethodVisitor extends VoidVisitorAdapter<Void>{
-	
-		@Override
-		public void visit(MethodDeclaration n, Void arg) {
-			// TODO Auto-generated method stub
-			System.out.println(n.getNameAsString());
-			System.out.println("" + n.getDeclarationAsString(true, false, true));
-			super.visit(n, arg);
-		}
-		
-	}
-	
-	public static class VariableVisitor extends VoidVisitorAdapter<Void>{
-		@Override
-		public void visit(VariableDeclarator n, Void arg){
-			super.visit(n, arg);
-			System.out.println(n.getName() + "\n" +n.getType());
+	public static void main(String[] args) throws Exception
+	{		
+				
+			GetCompilationUnit gc = new GetCompilationUnit();
+			List<String> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-1/");
+			String filename = "/home/deepika/parseroutput";
+			try{
+				File file = new File(filename +".java");
+				System.out.println("File created");
+				FileWriter fw = new FileWriter(file);
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write("Hello world");
+				bw.close();
+				fw.close();
+				
+			}
+			catch(Exception e){
+				System.out.println( e);
+			}
 			
 			
-		}
-	}
-	
-	
-	public static class getExtendedClass extends VoidVisitorAdapter<Void>{
-		@Override
-		public void visit(ClassOrInterfaceDeclaration n,Void arg){
-			super.visit(n, arg);
-			NodeList<ClassOrInterfaceType> list = n.getExtendedTypes();
-			for(int i=0; i<list.size(); i++)
-				System.out.println(list.get(i).getName());
-		}
-			
-	}
-	
-	public static class getInterfaces extends VoidVisitorAdapter<Void>{
-		
-		@Override
-		public void visit(ClassOrInterfaceDeclaration n,Void arg){
-			super.visit(n, arg);
-			NodeList<ClassOrInterfaceType> list = n.getImplementedTypes();
-			for(int i=0; i<list.size(); i++)
-				System.out.println(list.get(i).getName());
-			
-		}
-	} 
-	
-	
-	
-	
-	
+			for(int i = 0; i<java_files.size(); i++){
+				
+				ClassProperties classproperties = new ClassProperties(java_files.get(i).toString());
+				classproperties.getclassdata();
+				
+				
+				
+				
+				
+			}
+	}	
+
 
 }
