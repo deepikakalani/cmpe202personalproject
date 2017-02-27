@@ -16,8 +16,8 @@ public class ExtendedClassVisitor extends VoidVisitorAdapter<Void>{
 		super.visit(n, arg);
 		NodeList<ClassOrInterfaceType> extended_class_list = n.getExtendedTypes();
 		
-		for(int i=0; i<extended_class_list.size(); i++)
-			System.out.println(extended_class_list.get(i).getName());
+		//for(int i=0; i<extended_class_list.size(); i++)
+			//System.out.println(extended_class_list.get(i).getName());
 	}
 		
 	public NodeList<ClassOrInterfaceType> get_extended_class_list(){

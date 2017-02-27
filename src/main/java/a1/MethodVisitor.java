@@ -12,8 +12,8 @@ public class MethodVisitor extends VoidVisitorAdapter<Void>{
 	public void visit(MethodDeclaration n, Void arg) {
 		// TODO Auto-generated method stub
 		method_list.add(n.getNameAsString());
-		System.out.println(n.getNameAsString());
-		System.out.println("" + n.getDeclarationAsString(true, false, true));
+		//System.out.println(n.getNameAsString());
+		//System.out.println("" + n.getDeclarationAsString(true, false, true));
 		super.visit(n, arg);
 	}
 	

@@ -13,11 +13,11 @@ public class InterfaceVisitor extends VoidVisitorAdapter<Void> {
 		super.visit(n, arg);
 		NodeList<ClassOrInterfaceType> interface_list = n.getImplementedTypes();
 		
-		for(int i=0; i<interface_list.size(); i++)
-			System.out.println(interface_list.get(i).getName());
+		//for(int i=0; i<interface_list.size(); i++)
+			//System.out.println(interface_list.get(i).getName());
 	}
 		
-	public NodeList<ClassOrInterfaceType> get_extended_class_list(){
+	public NodeList<ClassOrInterfaceType> get_interface_class_list(){
 		return interface_list;
 	}
 

@@ -3,21 +3,27 @@ package a1;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class VariableVisitor extends VoidVisitorAdapter<Void>{
 	
-	List<String> variable_list = new ArrayList<String>();
+	List<VariableDeclarator> variable_list ;
 	@Override
-	public void visit(VariableDeclarator n, Void arg){
+	public void visit(VariableDeclarationExpr n, Void arg){
 		super.visit(n, arg);
-		System.out.println(n.getName() + "\n" +n.getType());
-		variable_list.add(n.getName() + "\n" +n.getType());
 		
+		System.out.println(n.getVariables());
+		//System.out.println(n.getModifiers());
+		for(VariableDeclarator var: variable_list)
+			System.out.println(var.getNameAsString());
 		
 	}
-	public List<String> get_method_list(){
+	public List<VariableDeclarator> get_variable_list(){
+		
 		return variable_list;
+		
 	}
 }

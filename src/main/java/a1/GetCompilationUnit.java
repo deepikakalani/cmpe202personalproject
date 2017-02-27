@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class GetCompilationUnit {
+	static File file;
+	static BufferedWriter bw;
 
 	//File parsed_code = new File();
 	
@@ -30,17 +32,12 @@ public class GetCompilationUnit {
 				java_files.add(f.toString());
 		}
 		
-		/*for(String s:java_files){
-			for(String ret:s.split("/"))
-				if (ret.endsWith(".java"))
-					result.add(ret);	
-		}
-		for(int i =0; i<result.size(); i++){
-			System.out.println(result.get(i));
-		}*/
+
 		return java_files;
 		
 	}
+	
+	
 	
 	public static void main(String[] args) throws Exception
 	{		
@@ -48,31 +45,19 @@ public class GetCompilationUnit {
 			GetCompilationUnit gc = new GetCompilationUnit();
 			List<String> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-1/");
 			String filename = "/home/deepika/parseroutput";
-			try{
-				File file = new File(filename +".java");
-				System.out.println("File created");
-				FileWriter fw = new FileWriter(file);
-				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write("Hello world");
-				bw.close();
-				fw.close();
-				
-			}
-			catch(Exception e){
-				System.out.println( e);
-			}
 			
-			
+			file = new File(filename +".java");
+			FileWriter fw = new FileWriter(file);
+			bw = new BufferedWriter(fw);
+
 			for(int i = 0; i<java_files.size(); i++){
 				
 				ClassProperties classproperties = new ClassProperties(java_files.get(i).toString());
-				classproperties.getclassdata();
-				
-				
-				
-				
-				
+				classproperties.writeToJavaFile(bw);
 			}
+			bw.close();
+			
+			
 	}	
 
 
