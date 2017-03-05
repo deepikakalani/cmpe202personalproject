@@ -10,17 +10,17 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class ExtendedClassVisitor extends VoidVisitorAdapter<Void>{
 	NodeList<ClassOrInterfaceType> extended_class_list = new NodeList<ClassOrInterfaceType>();
-	
+	//List<String> extended_class_list = new ArrayList<String>();
+	String class_extended = null;
 	@Override
 	public void visit(ClassOrInterfaceDeclaration n,Void arg){
 		super.visit(n, arg);
-		NodeList<ClassOrInterfaceType> extended_class_list = n.getExtendedTypes();
-		
-		//for(int i=0; i<extended_class_list.size(); i++)
-			//System.out.println(extended_class_list.get(i).getName());
+		extended_class_list = n.getExtendedTypes();
 	}
 		
-	public NodeList<ClassOrInterfaceType> get_extended_class_list(){
-		return extended_class_list;
+	public String get_extended_class_list(){
+		if(extended_class_list.size()!=0)
+			return extended_class_list.get(0).getNameAsString();
+		return "";
 	}
 }

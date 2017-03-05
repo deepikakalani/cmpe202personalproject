@@ -16,20 +16,23 @@ public class ClassNameVisitor extends VoidVisitorAdapter<Void>{
 	ClassOrInterfaceDeclaration class_name ;
 	ClassOrInterfaceDeclaration interface_name;
 	
-	Map<String,ClassOrInterfaceDeclaration> map = new HashMap();
+	Map<Integer, String> map = new HashMap();
 	@Override
 	public void visit(ClassOrInterfaceDeclaration n, Void arg){
-		super.visit(n, arg);
 		
+		//System.out.println(n.getDefaultConstructor());
+		//System.out.println(n.getMembers().get(0));
 		if (!n.isInterface())
-			map.put("classname", n);
+			map.put(0, n.getName().toString());
 		else
-			map.put("interfacename", n);
+			map.put(1, n.getName().toString());
 		//else
 			//interface_name = n.getNameAsString();
+
+			
 	}
 		
-	public Map<String,ClassOrInterfaceDeclaration> getClassName(){
+	public Map<Integer, String> getClassName(){
 		return map;
 	}
 	

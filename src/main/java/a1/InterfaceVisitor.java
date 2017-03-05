@@ -11,14 +11,13 @@ public class InterfaceVisitor extends VoidVisitorAdapter<Void> {
 	@Override
 	public void visit(ClassOrInterfaceDeclaration n,Void arg){
 		super.visit(n, arg);
-		NodeList<ClassOrInterfaceType> interface_list = n.getImplementedTypes();
-		
-		//for(int i=0; i<interface_list.size(); i++)
-			//System.out.println(interface_list.get(i).getName());
+		interface_list = n.getImplementedTypes();
 	}
 		
-	public NodeList<ClassOrInterfaceType> get_interface_class_list(){
-		return interface_list;
+	public String get_interface_class_list(){
+		if(interface_list.size() != 0)
+			return interface_list.get(0).getName().toString();
+		return "";
 	}
 
 }
