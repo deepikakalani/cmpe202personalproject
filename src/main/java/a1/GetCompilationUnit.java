@@ -41,7 +41,6 @@ public class GetCompilationUnit {
 	static File file;
 	static BufferedWriter bw;
 
-	//File parsed_code = new File();
 	
 	public List<String> extractJavaFiles(String path){
 		//List<String> result = new ArrayList<String>();
@@ -52,7 +51,6 @@ public class GetCompilationUnit {
 				java_files.add(f.toString());
 		}
 		
-
 		return java_files;
 		
 	}
@@ -70,17 +68,11 @@ public class GetCompilationUnit {
 			List<Pair<String, String>> list_dependency = new ArrayList<Pair<String, String>>();
 			List<Pair<String, String>> list_interface = new ArrayList<Pair<String, String>>();
 			List<Pair<String, String>> list_inheritance = new ArrayList<Pair<String, String>>();
+			
 			//Extract java files from given folder
 			GetCompilationUnit gc = new GetCompilationUnit();
 			List<String> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-4/");
 			
-			
-			//List<String> class_list = new ArrayList<String>();
-			//Map<String,String> class_map = new HashMap<String,String>();
-			
-			
-			//for(int i =0; i<java_files.size();i++)
-				//class_list.add(java_files.get(i).split("/")[7].split(".java")[0].toString());
 			
 			//create file for plantuml input
 			String filename = "/home/deepika/parseroutput";
