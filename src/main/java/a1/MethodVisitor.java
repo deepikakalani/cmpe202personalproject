@@ -17,7 +17,8 @@ public class MethodVisitor extends VoidVisitorAdapter<Void>{
 //		System.out.println("" + n.getDeclarationAsString(true, false, true));
 //		super.visit(n, arg);
 		nlist.add(n);
-		
+		//for(int i =0;i<nlist.size(); i++)
+			//System.out.println(nlist.get(i));
 		
 	}
 	

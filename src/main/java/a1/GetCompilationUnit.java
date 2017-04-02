@@ -136,10 +136,12 @@ public class GetCompilationUnit {
 					gc.appendString(bw, "interface " + class_name + " {");
 					
 				}
-				if(constructor != null)
-					System.out.println(constructor.getDeclarationAsString());
-				//System.out.println("class : " + class_name);
-				for(int w = 0; w < n.size(); w++)
+				
+				
+				//if(constructor != null)
+				//	System.out.println(constructor.getDeclarationAsString());
+				System.out.println("class : " + class_name);
+				//for(int w = 0; w < n.size(); w++)
 					//System.out.println(n.get(w).getDeclarationAsString(true, true, true));
 					
 				//this for loop gets variable type and name and modifier
@@ -191,23 +193,32 @@ public class GetCompilationUnit {
 				for(int j = 0; j < n.size(); j++)
 				{
 					MethodDeclaration curM = n.get(j);
+					
 					NodeList<Parameter> lp = curM.getParameters();
+					String method_name = curM.getNameAsString();
+					//System.out.println("Inside method " + method_name); 
 					for(int m = 0; m < lp.size(); m++)
 					{
 						Parameter cP = lp.get(m);
 						String t = cP.getType().toString();
-						if(mapIsClass.get(t) == 1)
+						if(mapIsClass.get(t) != null && mapIsClass.get(t) == 1)
 						{
 							list_dependency.add(new Pair<String, String>(t, class_name));
-							//todo remove duplicate entries
+							
 						}
+						//System.out.println("Inside method " + method_name + " parameter " + t); 
 							
 					}
+					
+					
 				}
 				
-				constructor.getParameters();
 				
-				//todo3 : do same for methods
+				//todo remove duplicate entries in list_dependency
+				
+				//constructor.getParameters();
+				
+				
 				
 				//todo4 : write code for --> --->> using logic generated above
 				
