@@ -7,6 +7,7 @@ import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
@@ -19,8 +20,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 class Pair<L,R> {
@@ -58,6 +62,23 @@ public class GetCompilationUnit {
 	public void appendString(BufferedWriter builder, String value) throws Exception
 	{
 	    builder.append(value + System.getProperty("line.separator"));
+	}
+	
+	public static List<Pair<String, String>> removeDuplicatePairs(List<Pair<String, String>> s)
+	{
+		List<Pair<String, String>> ret = new ArrayList<Pair<String, String>>();
+		Set<String> hash = new HashSet<String>();
+		for (int z = 0; z < s.size(); z++)
+		{
+			String curr = s.get(z).getL() + s.get(z).getR();
+			if(! hash.contains(curr))
+			{
+				ret.add(s.get(z));
+				hash.add(curr);
+			}
+			
+		}
+		return ret;
 	}
 	
 	public static void main(String[] args) throws Exception
@@ -209,16 +230,30 @@ public class GetCompilationUnit {
 						//System.out.println("Inside method " + method_name + " parameter " + t); 
 							
 					}
-					
-					
+					String method_body = curM.getBody().toString();
+					if(method_body != "Optional.empty")
+					{
+						for(int z = 0; z < java_files.size(); z++){
+							if (method_body.contains(java_files.get(z)))
+							{
+								list_dependency.add(new Pair<String, String>(java_files.get(z), class_name));
+							}
+							
+						}
+						
+					}
+		
 				}
 				
 				
 				//todo remove duplicate entries in list_dependency
+				List<Pair<String, String>> list_dependency_new = removeDuplicatePairs(list_dependency);
 				
 				//constructor.getParameters();
 				
-				
+				for(int z=0;z<list_dependency_new.size();z++){
+					System.out.println(list_dependency_new.get(z).getL() + " " + list_dependency_new.get(z).getR());
+				}
 				
 				//todo4 : write code for --> --->> using logic generated above
 				
