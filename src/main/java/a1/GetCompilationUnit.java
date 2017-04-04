@@ -46,13 +46,14 @@ public class GetCompilationUnit {
 	static BufferedWriter bw;
 
 	
-	public List<String> extractJavaFiles(String path){
+	public List<File> extractJavaFiles(String path){
 		//List<String> result = new ArrayList<String>();
-		List<String> java_files = new ArrayList<String>();
+		List<File> java_files = new ArrayList<File>();
 		File[] files = new File(path).listFiles();
 		for(File f: files){
-			if(f.isFile() && (f.toString()).endsWith(".java"))
-				java_files.add(f.toString());
+			if(f.isFile() && (f.toString()).endsWith(".java")){
+				java_files.add(f);
+			}
 		}
 		
 		return java_files;
@@ -92,7 +93,7 @@ public class GetCompilationUnit {
 			
 			//Extract java files from given folder
 			GetCompilationUnit gc = new GetCompilationUnit();
-			List<String> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-4/");
+			List<File> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-5/");
 			
 			
 			//create file for plantuml input
@@ -117,7 +118,8 @@ public class GetCompilationUnit {
 				
 				List<MethodDeclaration> n = classproperties.getMethodDeclaration();
 				ConstructorDeclaration constructor_dec = classproperties.getConstructorDeclaration();
-
+				
+				
 				//create Object of ClassData class and add the map in List
 				ClassData cd = new ClassData();
 				cd.classcoreData = classprop;
@@ -144,8 +146,9 @@ public class GetCompilationUnit {
 				
 				String class_name;
 				String extended_class;
-				String implemented_class;
+				String[] implemented_class;
 				List<String> l;
+				String constructor_declaration = null;
 				
 				if(classDataList.get(i).classcoreData.get("classandinterface").get(0) != null){
 					class_name = classprop.get("classandinterface").get(0).toString();
@@ -155,15 +158,9 @@ public class GetCompilationUnit {
 				{
 					class_name = classprop.get("classandinterface").get(1).toString();
 					gc.appendString(bw, "interface " + class_name + " {");
-					
 				}
 				
 				
-				//if(constructor != null)
-				//	System.out.println(constructor.getDeclarationAsString());
-				System.out.println("class : " + class_name);
-				//for(int w = 0; w < n.size(); w++)
-					//System.out.println(n.get(w).getDeclarationAsString(true, true, true));
 					
 				//this for loop gets variable type and name and modifier
 				for(int j = 0; j<classprop.get("variables").size(); j++)
@@ -175,23 +172,30 @@ public class GetCompilationUnit {
 					}
 					else if(modifier.contains("public"))
 						modifier = "+";
+					else
+					{
+						classprop.get("variables").remove(j);
+						continue;
+					}
+						
 					String type = (l.get(1)).toString();
 					String name = (l.get(2)).toString();
 					String type_name;
+					
 					
 					//if else block to check if the Field Declation is a variable type or Class type or Collection of class type.
 					//todo: check if colletion is substr of type. If yes find class name and add it association in todo:2
 					if(type.contains("Collection"))
 					{
 						type_name = type.substring(type.indexOf('<')+1, type.indexOf('>'));
-						list_association_many.add(new Pair<String, String>(class_name, type_name));
+						list_association_many.add(new Pair<String, String>(type_name, class_name));
 						//System.out.println(class_name + " many associate " + type_name);
 					}
 					else if(mapIsClass.get(type) == null)
-						gc.appendString(bw, modifier +" " + type + ":" + name);
+						gc.appendString(bw, modifier +" " + name + ":" + type);
 					else 
 					{
-						list_association_one.add(new Pair<String, String>(class_name, type));
+						list_association_one.add(new Pair<String, String>(type, class_name));
 						//System.out.println(class_name + " associate " + type);
 						
 					}
@@ -204,62 +208,173 @@ public class GetCompilationUnit {
 					//System.out.println(class_name + "extends" + extended_class);
 				}
 				
-				if(classprop.get("implements").get("implements").toString() != "")
+				if(classprop.get("implements") != null)
 				{
-					implemented_class = classprop.get("implements").get("implements").toString();
-					list_interface.add(new Pair<String, String>(implemented_class, class_name));
-					//System.out.println(class_name + "implements" + implemented_class);
+					
+					Map<Integer, String> interface_map = classprop.get("implements");
+					
+					for(int z = 0; z<interface_map.size(); z++)
+					{
+						String imple_class = interface_map.get(z).toString();
+						System.out.println("class_name" + class_name);
+						System.out.println(imple_class);
+						list_interface.add(new Pair<String, String>(imple_class, class_name));
+					}
 				}
 				
-				for(int j = 0; j < n.size(); j++)
+				
+				//create constructor string
+				String constructor_string = null;
+				//System.out.println(constructor);
+				if(constructor != null)
 				{
-					MethodDeclaration curM = n.get(j);
-					
-					NodeList<Parameter> lp = curM.getParameters();
-					String method_name = curM.getNameAsString();
-					//System.out.println("Inside method " + method_name); 
-					for(int m = 0; m < lp.size(); m++)
+					NodeList<Parameter> constructor_param = constructor.getParameters();
+					int count = constructor_param.size();
+					String parameter_list = "(";
+					for(int z = 0; z<constructor_param.size(); z++)
 					{
-						Parameter cP = lp.get(m);
+						String type = constructor_param.get(z).getType().toString();
+						String name = constructor_param.get(z).getNameAsString();
+						parameter_list = parameter_list + name + ":" + type;
+						if(count > 1)
+						{
+							parameter_list = parameter_list + ", ";
+							count --;
+						}
+					}
+					parameter_list = parameter_list + ")";
+					
+					String const_declaration = "+";
+					
+					constructor_declaration = constructor.getDeclarationAsString(true, false, true);
+					if(constructor_declaration.contains("public"))
+					{	
+						String constructor_name = constructor.getNameAsString();
+						constructor_string = const_declaration + " " + constructor_name + parameter_list;
+					}
+					
+					for(int m = 0; m < constructor_param.size(); m++)
+					{
+						Parameter cP = constructor_param.get(m);
 						String t = cP.getType().toString();
-						if(mapIsClass.get(t) != null && mapIsClass.get(t) == 1)
+						if(mapIsClass.get(t) != null && mapIsClass.get(t) == 1 && mapIsClass.get(class_name) != 1)
 						{
 							list_dependency.add(new Pair<String, String>(t, class_name));
 							
 						}
-						//System.out.println("Inside method " + method_name + " parameter " + t); 
+							
+					}
+				}
+				//Append the constructor string
+				if(constructor_string != null)
+				{
+					gc.appendString(bw, constructor_string);
+				}
+				
+				//append method string for all methods where 'n' is lit of all method declarations			
+				for(int j = 0; j < n.size(); j++)
+				{
+					
+					MethodDeclaration curM = n.get(j);
+					NodeList<Parameter> lp = curM.getParameters();
+					
+					String method_declaration = curM.getDeclarationAsString();
+					String declaration = "+";
+					if(method_declaration.contains("public"))
+					{	
+						int count = lp.size();
+						String parameter_list = "(";
+						for(int z = 0; z<lp.size(); z++)
+						{
+							String type = lp.get(z).getType().toString();
+							String name = lp.get(z).getNameAsString();
+							parameter_list = parameter_list + name + ":" + type;
+							if(count > 1)
+							{
+								parameter_list = parameter_list + ", ";
+								count --;
+							}
+						}
+						parameter_list = parameter_list + ")";
+						String method_name = curM.getNameAsString();
+						String method_type = curM.getType().toString();
+						declaration = declaration + " " + method_name + parameter_list + ":" + method_type;
+					}
+					else
+					{
+						n.remove(j);
+						continue;
+					}
+					
+					gc.appendString(bw, declaration);
+					
+					//Getting dependency relationship from method declaration and method body
+					for(int m = 0; m < lp.size(); m++)
+					{
+						Parameter cP = lp.get(m);
+						String t = cP.getType().toString();
+						if(mapIsClass.get(t) != null && mapIsClass.get(t) == 1 && mapIsClass.get(class_name) != 1)
+						{
+							list_dependency.add(new Pair<String, String>(t, class_name));
+							
+						}
 							
 					}
 					String method_body = curM.getBody().toString();
 					if(method_body != "Optional.empty")
 					{
+						System.out.println(method_body);
+						
 						for(int z = 0; z < java_files.size(); z++){
-							if (method_body.contains(java_files.get(z)))
-							{
-								list_dependency.add(new Pair<String, String>(java_files.get(z), class_name));
-							}
+							String file_name = java_files.get(z).getName().toString().substring(0, java_files.get(z).getName().toString().indexOf("."));
 							
+							System.out.println(file_name);
+							if (method_body.contains(file_name + " "))
+							{
+								list_dependency.add(new Pair<String, String>(file_name, class_name));
+							}	
 						}
 						
 					}
 		
 				}
-				
-				
-				//todo remove duplicate entries in list_dependency
-				List<Pair<String, String>> list_dependency_new = removeDuplicatePairs(list_dependency);
-				
-				//constructor.getParameters();
-				
-				for(int z=0;z<list_dependency_new.size();z++){
-					System.out.println(list_dependency_new.get(z).getL() + " " + list_dependency_new.get(z).getR());
-				}
-				
-				//todo4 : write code for --> --->> using logic generated above
-				
+						
 				gc.appendString(bw, "}");
+		
 			}
 			
+			//remove duplicate entries in list_dependency
+			List<Pair<String, String>> list_dependency_new = removeDuplicatePairs(list_dependency);
+			List<Pair<String, String>> list_inheritance_new = removeDuplicatePairs(list_inheritance);
+			List<Pair<String, String>> list_association_one_new = removeDuplicatePairs(list_association_one);
+			List<Pair<String, String>> list_association_many_new = removeDuplicatePairs(list_association_many);
+			List<Pair<String, String>> list_interface_new = removeDuplicatePairs(list_interface);
+			
+			for(int x = 0; x<list_interface_new.size();x++)
+			{
+				System.out.println(list_interface_new.get(x).getL() + list_interface_new.get(x).getR());
+			}
+			//code for appending relationships in parser file using lists generated above
+			for(int z=0;z<list_inheritance_new.size();z++)
+			{
+				gc.appendString(bw, list_inheritance_new.get(z).getL() +" <|-- " + list_inheritance_new.get(z).getR());
+			}
+			for(int z=0;z<list_association_one_new.size();z++)
+			{
+				gc.appendString(bw, list_association_one_new.get(z).getL() +" -- " + list_association_one_new.get(z).getR());
+			}
+			for(int z=0;z<list_association_many_new.size();z++)
+			{
+				gc.appendString(bw, list_association_many_new.get(z).getL() +" \"*\" -- \"1\" "  + list_association_many_new.get(z).getR());
+			}
+			for(int z=0;z<list_dependency_new.size();z++)
+			{
+				gc.appendString(bw, list_dependency_new.get(z).getL() +" <.. " + list_dependency_new.get(z).getR());
+			}
+			for(int z=0;z<list_interface_new.size();z++)
+			{
+				gc.appendString(bw, list_interface_new.get(z).getL() +" <|.. " + list_interface_new.get(z).getR());
+			}
 			gc.appendString(bw, "@enduml");
 			bw.close();
 			

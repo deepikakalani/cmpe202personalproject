@@ -28,7 +28,7 @@ public class ClassProperties {
 	List<FieldDeclaration> variable_list;
 	String extended_class;
 	String class_name;
-	String interface_class;
+	NodeList<ClassOrInterfaceType> interface_classes;
 	ClassOrInterfaceDeclaration result;
 	Map<String, Map> classprop = new HashMap<String, Map>();
 	List<MethodDeclaration> nlist;
@@ -95,7 +95,6 @@ public class ClassProperties {
 		
 		
 		methodvisitor.visit(c, null);
-		//method_list = 
 		nlist = methodvisitor.get_method_list();
 
 		
@@ -108,9 +107,16 @@ public class ClassProperties {
 		
 		
 		interfacevisitor.visit(c, null);
-		interface_class = interfacevisitor.get_interface_class_list();
-		Map<String, String> interface_map = new HashMap<String, String>();
-		interface_map.put("implements", interface_class);
+		interface_classes = interfacevisitor.get_interface_class_list();
+		Map<Integer, String> interface_map = new HashMap<Integer, String>();
+		if(interface_classes!=null)
+		{
+			for(int i = 0; i< interface_classes.size(); i++)
+			{
+				System.out.println(interface_classes.get(i).toString());
+				interface_map.put(i, interface_classes.get(i).toString());
+			}
+		}
 		classprop.put("implements", interface_map);
 
 		constructorvisitor.visit(c, null);
@@ -125,27 +131,6 @@ public class ClassProperties {
 	{
 	    builder.append(value + System.getProperty("line.separator"));
 	}
-	
-	
-	/*public void writeToJavaFile(BufferedWriter bw) throws Exception{
-		getclassdata();
-		
-		appendString(bw, "/**");
-		appendString(bw, "* @opt all");
-		appendString(bw, " ");
-		appendString(bw, "class " + result);
-		if(!extended_class_list.isEmpty()){
-			System.out.println(extended_class_list);
-		}
-		
-		appendString(bw, "{");
-		//System.out.println(variable_list);
-		//System.out.println(variable_list.size());
-		
-		appendString(bw, "}");
-		
-		
-	}*/
 	
 	
 }
