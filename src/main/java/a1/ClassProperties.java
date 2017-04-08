@@ -44,6 +44,10 @@ public class ClassProperties {
 		return constructor_dec;
 	}
 	
+	public List<FieldDeclaration> getVariableDeclaration(){
+		return variable_list;
+	}
+	
 	public ClassProperties(String filename) throws FileNotFoundException{
 		FileInputStream infile = new FileInputStream(filename);
 		c = JavaParser.parse(infile);

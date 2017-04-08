@@ -11,6 +11,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.visitor.*;
 import java.io.FileInputStream;
 import java.io.BufferedWriter;
@@ -93,7 +94,7 @@ public class GetCompilationUnit {
 			
 			//Extract java files from given folder
 			GetCompilationUnit gc = new GetCompilationUnit();
-			List<File> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-5/");
+			List<File> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-4");
 			
 			
 			//create file for plantuml input
@@ -115,7 +116,7 @@ public class GetCompilationUnit {
 				ClassProperties classproperties = new ClassProperties(java_files.get(i).toString());
 				//classproperties.writeToJavaFile(bw);
 				Map<String, Map> classprop= classproperties.getclassdata();
-				
+				List<FieldDeclaration> variable_list = classproperties.getVariableDeclaration();
 				List<MethodDeclaration> n = classproperties.getMethodDeclaration();
 				ConstructorDeclaration constructor_dec = classproperties.getConstructorDeclaration();
 				
@@ -123,6 +124,7 @@ public class GetCompilationUnit {
 				//create Object of ClassData class and add the map in List
 				ClassData cd = new ClassData();
 				cd.classcoreData = classprop;
+				cd.variable_list = variable_list;
 				cd.nlist= n;
 				cd.const_dec = constructor_dec;
 				classDataList.add(cd);
@@ -143,6 +145,7 @@ public class GetCompilationUnit {
 				Map<String, Map> classprop = cd.classcoreData;
 				List<MethodDeclaration> n = cd.nlist;
 				ConstructorDeclaration constructor = cd.const_dec;
+				List<FieldDeclaration> variable_list = cd.variable_list;
 				
 				String class_name;
 				String extended_class;
@@ -160,10 +163,86 @@ public class GetCompilationUnit {
 					gc.appendString(bw, "interface " + class_name + " {");
 				}
 				
+				List<FieldDeclaration> changeModifier = new ArrayList<FieldDeclaration>();
+				for(int j = 0; j < n.size(); j++)
+				{
+					MethodDeclaration curM = n.get(j);
+					String method_name = curM.getNameAsString();
+					if (method_name.startsWith("set") || method_name.startsWith("get"))
+					{
+						//System.out.println("Inside this set and get method " + method_name);
+						String var_name = method_name.substring(3).toLowerCase();
+						for(int x=0; x<variable_list.size(); x++)
+						{
+							//System.out.println(variable_list.get(x).getVariables().get(0).toString());
+							//System.out.println(var_name);
+							if(variable_list.get(x).getVariables().get(0).toString().equals(var_name))//&& curM.getBody().get()!=null)
+							{
+								//System.out.println("Inside final loop");
+								changeModifier.add(variable_list.get(x));
+								n.remove(j);
+								j--;
+							}
+						}
+								
+					}
+				}
 				
-					
+//				for(int y=0; y < changeModifier.size(); y++)
+//				{
+//					System.out.println(changeModifier.get(y).toString());
+//				}
+				
 				//this for loop gets variable type and name and modifier
-				for(int j = 0; j<classprop.get("variables").size(); j++)
+				
+				for(int x=0; x<variable_list.size(); x++){
+					String modifier = variable_list.get(x).getModifiers().toString().toLowerCase();
+					for(int y=0; y < changeModifier.size(); y++)
+					{
+						String s1 = variable_list.get(x).getVariables().get(0).toString();
+						String s2 = changeModifier.get(y).getVariables().get(0).toString();
+						if(s1.equals(s2)){
+							modifier = "public";
+							System.out.println(changeModifier.get(y).getVariables().get(0).toString());
+							break;
+						}
+					}
+					
+					//System.out.println(modifier);
+					if (modifier.contains("private")){
+						modifier = "-";
+					}
+					else if(modifier.contains("public"))
+						modifier = "+";
+					else
+					{
+						variable_list.remove(x);
+						continue;
+					}
+					String type = variable_list.get(x).getElementType().toString();
+					String name = variable_list.get(x).getVariable(0).toString();
+					String type_name;
+					
+					//if else block to check if the Field Declation is a variable type or Class type or Collection of class type.
+					//todo: check if colletion is substr of type. If yes find class name and add it association in todo:2
+					if(type.contains("Collection"))
+					{
+						type_name = type.substring(type.indexOf('<')+1, type.indexOf('>'));
+						list_association_many.add(new Pair<String, String>(type_name, class_name));
+						//System.out.println(class_name + " many associate " + type_name);
+					}
+					else if(mapIsClass.get(type) == null)
+						gc.appendString(bw, modifier +" " + name + ":" + type);
+					else 
+					{
+						list_association_one.add(new Pair<String, String>(type, class_name));
+						//System.out.println(class_name + " associate " + type);
+						
+					}
+					
+					
+				}
+				/*for(int j = 0; j<classprop.get("variables").size(); j++)
 				{
 					l = (List<String>) classprop.get("variables").get(j);
 					String modifier = l.get(0).toString();
@@ -199,7 +278,7 @@ public class GetCompilationUnit {
 						//System.out.println(class_name + " associate " + type);
 						
 					}
-				}
+				}*/
 				
 				if(classprop.get("extended").get("extended").toString() != "")
 				{
@@ -216,8 +295,6 @@ public class GetCompilationUnit {
 					for(int z = 0; z<interface_map.size(); z++)
 					{
 						String imple_class = interface_map.get(z).toString();
-						System.out.println("class_name" + class_name);
-						System.out.println(imple_class);
 						list_interface.add(new Pair<String, String>(imple_class, class_name));
 					}
 				}
@@ -274,8 +351,10 @@ public class GetCompilationUnit {
 				//append method string for all methods where 'n' is lit of all method declarations			
 				for(int j = 0; j < n.size(); j++)
 				{
-					
 					MethodDeclaration curM = n.get(j);
+					String method_name = curM.getNameAsString();
+					String method_type = curM.getType().toString();
+					
 					NodeList<Parameter> lp = curM.getParameters();
 					
 					String method_declaration = curM.getDeclarationAsString();
@@ -296,8 +375,7 @@ public class GetCompilationUnit {
 							}
 						}
 						parameter_list = parameter_list + ")";
-						String method_name = curM.getNameAsString();
-						String method_type = curM.getType().toString();
+						
 						declaration = declaration + " " + method_name + parameter_list + ":" + method_type;
 					}
 					else

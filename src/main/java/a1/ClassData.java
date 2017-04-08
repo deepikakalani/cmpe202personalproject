@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 
 //this class is holding metadata per class of given source code
 public class ClassData {
@@ -19,5 +20,6 @@ public class ClassData {
 	 */
 	public List<MethodDeclaration> nlist;	//
 	public ConstructorDeclaration const_dec;
+	public List<FieldDeclaration> variable_list;
 	
 }
