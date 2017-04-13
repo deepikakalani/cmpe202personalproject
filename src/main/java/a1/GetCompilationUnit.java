@@ -94,11 +94,11 @@ public class GetCompilationUnit {
 			
 			//Extract java files from given folder
 			GetCompilationUnit gc = new GetCompilationUnit();
-			List<File> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-4");
+			List<File> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-1");
 			
 			
 			//create file for plantuml input
-			String filename = "/home/deepika/parseroutput";
+			String filename = "parseroutput";
 			file = new File(filename +".java");
 			FileWriter fw = new FileWriter(file);
 			bw = new BufferedWriter(fw);
@@ -223,8 +223,8 @@ public class GetCompilationUnit {
 					String name = variable_list.get(x).getVariable(0).toString();
 					String type_name;
 					
-					//if else block to check if the Field Declation is a variable type or Class type or Collection of class type.
-					//todo: check if colletion is substr of type. If yes find class name and add it association in todo:2
+					//if else block to check if the Field Declaration is a variable type or Class type or Collection of class type.
+					//todo: check if collection is substr of type. If yes find class name and add it association in todo:2
 					if(type.contains("Collection"))
 					{
 						type_name = type.substring(type.indexOf('<')+1, type.indexOf('>'));
@@ -419,6 +419,33 @@ public class GetCompilationUnit {
 						
 				gc.appendString(bw, "}");
 		
+			}
+			
+			//remove 
+			/*List<Pair<String, String>> temp = new ArrayList<Pair<String, String>>();*/
+			for(int m = 0; m<list_association_one.size(); m++)
+			{
+				for(int n = 0; n<list_association_one.size(); n++){
+					//temp.add(new Pair<String, String> (list_association_many.get(m).getL(), list_association_many.get(m).getR() ));
+					if(list_association_one.get(m).getL() == list_association_one.get(n).getR() && list_association_one.get(m).getR() == list_association_one.get(n).getL()){
+						list_association_one.remove(n);
+						n--;
+					}
+				}
+			}
+			
+			List<Pair<String, String>> to_remove_list = new ArrayList<Pair<String, String>>();
+			for(int m = 0; m < list_association_one.size(); m++){
+				for(int n = 0; n<list_association_many.size(); n++){
+					if(list_association_one.get(m).getR() == list_association_many.get(n).getL() && list_association_one.get(m).getR() == list_association_many.get(n).getL()){
+						to_remove_list.add(new Pair<String, String>(list_association_one.get(m).getL(), list_association_one.get(m).getR()));
+						list_association_one.remove(m);
+					}
+				}
+			}
+			
+			for(int m = 0; m<to_remove_list.size(); m++ ){
+				
 			}
 			
 			//remove duplicate entries in list_dependency
