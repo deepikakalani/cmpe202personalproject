@@ -421,28 +421,38 @@ public class GetCompilationUnit {
 		
 			}
 			
+			System.out.println("Outside");
 			//remove 
-			/*List<Pair<String, String>> temp = new ArrayList<Pair<String, String>>();*/
+			List<Pair<String, String>> temp = new ArrayList<Pair<String, String>>();
 			for(int m = 0; m<list_association_one.size(); m++)
 			{
-				for(int n = 0; n<list_association_one.size(); n++){
-					//temp.add(new Pair<String, String> (list_association_many.get(m).getL(), list_association_many.get(m).getR() ));
-					if(list_association_one.get(m).getL() == list_association_one.get(n).getR() && list_association_one.get(m).getR() == list_association_one.get(n).getL()){
+				
+				for(int n = m+1; n<list_association_one.size(); n++){
+					
+					if((list_association_one.get(m).getL().equals(list_association_one.get(n).getR())) && (list_association_one.get(m).getR().equals( list_association_one.get(n).getL()))){
+						temp.add(new Pair<String, String>(list_association_one.get(m).getL(), list_association_one.get(m).getR()));
+					}
+				}
+			}
+				
+			for(int m = 0; m<temp.size(); m++){
+				for(int n = m+1 ; n <list_association_one.size(); n++){
+					if(temp.get(m).getL().equals(list_association_one.get(n).getL()) && temp.get(m).getR().equals(list_association_one.get(n).getR())){
 						list_association_one.remove(n);
 						n--;
 					}
 				}
 			}
 			
-			List<Pair<String, String>> to_remove_list = new ArrayList<Pair<String, String>>();
+			/*List<Pair<String, String>> to_remove_list = new ArrayList<Pair<String, String>>();
 			for(int m = 0; m < list_association_one.size(); m++){
 				for(int n = 0; n<list_association_many.size(); n++){
-					if(list_association_one.get(m).getR() == list_association_many.get(n).getL() && list_association_one.get(m).getR() == list_association_many.get(n).getL()){
+					if(list_association_one.get(m).getR().equals(list_association_many.get(n).getL()) && list_association_one.get(m).getR() == list_association_many.get(n).getL()){
 						to_remove_list.add(new Pair<String, String>(list_association_one.get(m).getL(), list_association_one.get(m).getR()));
 						list_association_one.remove(m);
 					}
 				}
-			}
+			}*/
 			
 			for(int m = 0; m<to_remove_list.size(); m++ ){
 				
