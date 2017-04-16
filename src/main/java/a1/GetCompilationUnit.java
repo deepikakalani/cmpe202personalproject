@@ -444,18 +444,31 @@ public class GetCompilationUnit {
 				}
 			}
 			
-			/*List<Pair<String, String>> to_remove_list = new ArrayList<Pair<String, String>>();
+			List<Pair<String, String>> to_remove_list = new ArrayList<Pair<String, String>>();
 			for(int m = 0; m < list_association_one.size(); m++){
 				for(int n = 0; n<list_association_many.size(); n++){
-					if(list_association_one.get(m).getR().equals(list_association_many.get(n).getL()) && list_association_one.get(m).getR() == list_association_many.get(n).getL()){
+					if(list_association_one.get(m).getR().equals(list_association_many.get(n).getL()) && list_association_one.get(m).getL().equals(list_association_many.get(n).getR())){
 						to_remove_list.add(new Pair<String, String>(list_association_one.get(m).getL(), list_association_one.get(m).getR()));
-						list_association_one.remove(m);
+						//list_association_one.remove(m);
 					}
 				}
-			}*/
+			}
 			
-			for(int m = 0; m<to_remove_list.size(); m++ ){
-				
+			System.out.println("Remove list entries");
+			
+			for(int i =0; i< to_remove_list.size(); i++){
+				System.out.println(to_remove_list.get(i).getL() + " " + to_remove_list.get(i).getR());
+			}
+			
+			for(int m=0; m<to_remove_list.size(); m++){
+				for(int n = 0; n<list_association_one.size(); n++)
+				{
+					if(to_remove_list.get(m).getR().equals(list_association_one.get(n).getR()) && to_remove_list.get(m).getL().equals(list_association_one.get(n).getL())){
+						//System.out.println();
+						list_association_one.remove(n);
+						n--;
+					}
+				}
 			}
 			
 			//remove duplicate entries in list_dependency
