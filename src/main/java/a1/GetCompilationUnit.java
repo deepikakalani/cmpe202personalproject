@@ -85,6 +85,14 @@ public class GetCompilationUnit {
 	
 	public static void main(String[] args) throws Exception
 	{		
+		
+			//extract args
+			String folderPath = args[0];
+			String parserFile = args[1];
+			
+			System.out.println(folderPath);
+			System.out.println(parserFile);
+			
 			//define Lists for dependencies
 			List<Pair<String, String>> list_association_one = new ArrayList<Pair<String, String>>();
 			List<Pair<String, String>> list_association_many = new ArrayList<Pair<String, String>>();
@@ -94,7 +102,7 @@ public class GetCompilationUnit {
 			
 			//Extract java files from given folder
 			GetCompilationUnit gc = new GetCompilationUnit();
-			List<File> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-1");
+			List<File> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-5");
 			
 			
 			//create file for plantuml input
