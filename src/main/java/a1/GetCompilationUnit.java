@@ -102,11 +102,11 @@ public class GetCompilationUnit {
 			
 			//Extract java files from given folder
 			GetCompilationUnit gc = new GetCompilationUnit();
-			List<File> java_files = gc.extractJavaFiles("/home/deepika/Projects/cmpe202/umlparser/uml-parser-test-5");
+			List<File> java_files = gc.extractJavaFiles(folderPath);
 			
 			
 			//create file for plantuml input
-			String filename = "parseroutput";
+			String filename = parserFile;
 			file = new File(filename +".java");
 			FileWriter fw = new FileWriter(file);
 			bw = new BufferedWriter(fw);
@@ -513,6 +513,8 @@ public class GetCompilationUnit {
 			}
 			gc.appendString(bw, "@enduml");
 			bw.close();
+			
+			Process proc = Runtime.getRuntime().exec("java -jar ./Downloads/plantuml.jar " + filename + ".java");
 			
 			
 			
