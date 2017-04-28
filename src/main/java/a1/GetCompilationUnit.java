@@ -90,8 +90,6 @@ public class GetCompilationUnit {
 			String folderPath = args[0];
 			String parserFile = args[1];
 			
-			System.out.println(folderPath);
-			System.out.println(parserFile);
 			
 			//define Lists for dependencies
 			List<Pair<String, String>> list_association_one = new ArrayList<Pair<String, String>>();
@@ -514,7 +512,7 @@ public class GetCompilationUnit {
 			gc.appendString(bw, "@enduml");
 			bw.close();
 			
-			Process proc = Runtime.getRuntime().exec("java -jar ./Downloads/plantuml.jar " + filename + ".java");
+			Process proc = Runtime.getRuntime().exec("java -jar plantuml.jar " + filename + ".java");
 			
 			
 			
