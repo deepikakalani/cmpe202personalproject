@@ -180,8 +180,6 @@ public class GetCompilationUnit {
 						String var_name = method_name.substring(3).toLowerCase();
 						for(int x=0; x<variable_list.size(); x++)
 						{
-							//System.out.println(variable_list.get(x).getVariables().get(0).toString());
-							//System.out.println(var_name);
 							if(variable_list.get(x).getVariables().get(0).toString().equals(var_name))//&& curM.getBody().get()!=null)
 							{
 								//System.out.println("Inside final loop");
@@ -194,11 +192,7 @@ public class GetCompilationUnit {
 					}
 				}
 				
-//				for(int y=0; y < changeModifier.size(); y++)
-//				{
-//					System.out.println(changeModifier.get(y).toString());
-//				}
-				
+//								
 				//this for loop gets variable type and name and modifier
 				
 				for(int x=0; x<variable_list.size(); x++){
@@ -209,7 +203,7 @@ public class GetCompilationUnit {
 						String s2 = changeModifier.get(y).getVariables().get(0).toString();
 						if(s1.equals(s2)){
 							modifier = "public";
-							System.out.println(changeModifier.get(y).getVariables().get(0).toString());
+							//System.out.println(changeModifier.get(y).getVariables().get(0).toString());
 							break;
 						}
 					}
@@ -248,43 +242,7 @@ public class GetCompilationUnit {
 					
 					
 				}
-				/*for(int j = 0; j<classprop.get("variables").size(); j++)
-				{
-					l = (List<String>) classprop.get("variables").get(j);
-					String modifier = l.get(0).toString();
-					if (modifier.contains("private")){
-						modifier = "-";
-					}
-					else if(modifier.contains("public"))
-						modifier = "+";
-					else
-					{
-						classprop.get("variables").remove(j);
-						continue;
-					}
-						
-					String type = (l.get(1)).toString();
-					String name = (l.get(2)).toString();
-					String type_name;
-					
-					
-					//if else block to check if the Field Declation is a variable type or Class type or Collection of class type.
-					//todo: check if colletion is substr of type. If yes find class name and add it association in todo:2
-					if(type.contains("Collection"))
-					{
-						type_name = type.substring(type.indexOf('<')+1, type.indexOf('>'));
-						list_association_many.add(new Pair<String, String>(type_name, class_name));
-						//System.out.println(class_name + " many associate " + type_name);
-					}
-					else if(mapIsClass.get(type) == null)
-						gc.appendString(bw, modifier +" " + name + ":" + type);
-					else 
-					{
-						list_association_one.add(new Pair<String, String>(type, class_name));
-						//System.out.println(class_name + " associate " + type);
-						
-					}
-				}*/
+				
 				
 				if(classprop.get("extended").get("extended").toString() != "")
 				{
@@ -407,12 +365,9 @@ public class GetCompilationUnit {
 					String method_body = curM.getBody().toString();
 					if(method_body != "Optional.empty")
 					{
-						System.out.println(method_body);
-						
 						for(int z = 0; z < java_files.size(); z++){
 							String file_name = java_files.get(z).getName().toString().substring(0, java_files.get(z).getName().toString().indexOf("."));
 							
-							System.out.println(file_name);
 							if (method_body.contains(file_name + " "))
 							{
 								list_dependency.add(new Pair<String, String>(file_name, class_name));
@@ -427,7 +382,6 @@ public class GetCompilationUnit {
 		
 			}
 			
-			System.out.println("Outside");
 			//remove 
 			List<Pair<String, String>> temp = new ArrayList<Pair<String, String>>();
 			for(int m = 0; m<list_association_one.size(); m++)
@@ -460,11 +414,6 @@ public class GetCompilationUnit {
 				}
 			}
 			
-			System.out.println("Remove list entries");
-			
-			for(int i =0; i< to_remove_list.size(); i++){
-				System.out.println(to_remove_list.get(i).getL() + " " + to_remove_list.get(i).getR());
-			}
 			
 			for(int m=0; m<to_remove_list.size(); m++){
 				for(int n = 0; n<list_association_one.size(); n++)
@@ -484,10 +433,7 @@ public class GetCompilationUnit {
 			List<Pair<String, String>> list_association_many_new = removeDuplicatePairs(list_association_many);
 			List<Pair<String, String>> list_interface_new = removeDuplicatePairs(list_interface);
 			
-			for(int x = 0; x<list_interface_new.size();x++)
-			{
-				System.out.println(list_interface_new.get(x).getL() + list_interface_new.get(x).getR());
-			}
+			
 			//code for appending relationships in parser file using lists generated above
 			for(int z=0;z<list_inheritance_new.size();z++)
 			{
@@ -513,7 +459,6 @@ public class GetCompilationUnit {
 			bw.close();
 			
 			Process proc = Runtime.getRuntime().exec("java -jar plantuml.jar " + filename + ".java");
-			
 			
 			
 	}	
