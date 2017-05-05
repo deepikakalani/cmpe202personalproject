@@ -16,7 +16,13 @@ Ex : umlparser.sh <path to source folder> <name of image file to be generated>
 Sequence diagram:
 Technologies/Libraries used: AspectJ, PlantUml
 
-Sequence diagram is generated given the source code is already present in the folder where my .aj file is. I have created the JAR which alreay has the the source code and the main function from the Main file is executed.
-
-To run the jar:
+To run Sequence Diagram: 
+1. Ensure java is installed correctly
+2. Download aspectj-1.8.10.jar from https://eclipse.org/aspectj/downloads.php
+3. java -jar aspectj-1.8.10.jar
+4. Follow the instructions as per the installer popped up
+5. Set the CLASSPATH and PATH variabels correctly.
+6. Copy the folder aspectCode to your working directory
+7. Fire the run.sh script with parameter as the test zip folder. (./aspectCode/run.sh <path of java source folder>)
+8. The output png would be found in the out directory generated in the aspectCode folder.
 
